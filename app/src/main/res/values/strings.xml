@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Weather</string>
+    <string name="search">Search</string>
+    <string name="recently_searched">Recently Searched</string>
+    <string name="degree_celsius_symbol">°C</string>
+    <string name="description_weather_condition_icon">weather condition icon</string>
+    <string name="label_humidity">Humidity</string>
+    <string name="label_pressure">Pressure</string>
+    <string name="label_visibility">Visibility</string>
+    <string name="base_url">https://api.openweathermap.org/data/2.5/</string>
+    <string name="app_id">3e968f0ca9485106c69697281e0d75d9</string>
 </resources>
