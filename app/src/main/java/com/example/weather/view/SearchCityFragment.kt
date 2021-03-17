@@ -1,4 +1,4 @@
-package com.example.weather
+package com.example.weather.view
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.weather.R
 import com.example.weather.adapter.RecentSearchAdapter
 import com.example.weather.model.City
 import com.example.weather.viewModel.WeatherViewModel

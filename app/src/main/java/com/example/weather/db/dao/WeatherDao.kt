@@ -13,5 +13,5 @@ interface WeatherDao {
     suspend fun insertWeatherData(weather: City?)
 
     @Query("select * from weather")
-    fun getWeatherData(): Flow<List<City>>
+     fun getWeatherData(): Flow<List<City>>
 }

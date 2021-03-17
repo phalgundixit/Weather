@@ -1,7 +1,8 @@
-package com.example.weather
+package com.example.weather.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.weather.R
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
