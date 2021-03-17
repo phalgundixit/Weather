@@ -2,7 +2,9 @@ package com.example.weather
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.NetworkInfo
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,6 +14,7 @@ import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.example.weather.databinding.ActivityMainBinding
+import com.example.weather.model.City
 import com.example.weather.viewModel.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_display_weather.*
@@ -57,27 +60,45 @@ class DisplayWeatherFragment : Fragment()  {
         val view = inflater.inflate(R.layout.fragment_display_weather, container, false)
         var city: String = arguments?.getString("city")?:"Delhi"
 
+        if(isInternetAvailable(context)) {
+
+            weatherViewModel.getCityData()
+            weatherViewModel.setSearchQuery(city)
+            weatherViewModel.weatherResponse.observe(viewLifecycleOwner, Observer { response ->
+
+                output_group.visibility = View.VISIBLE
+                tv_error_message.visibility = View.GONE
+
+                tv_date_time?.text = response.weather[0].description
+                tv_temperature?.text = (response.main.temp - 273.15).toInt().toString()
+                tv_city_country?.text = response.name
 
 
-        weatherViewModel.getCityData()
-        weatherViewModel.setSearchQuery(city)
-        weatherViewModel.weatherResponse.observe(viewLifecycleOwner, Observer {response->
-
-            output_group.visibility = View.VISIBLE
-            tv_error_message.visibility = View.GONE
-
-            tv_date_time?.text = response.weather[0].description
-            tv_temperature?.text = (response.main.temp - 273.15).toInt().toString()
-            tv_city_country?.text =response.name
+                tv_humidity_value?.text = response.main.humidity.toString()
+                tv_pressure_value?.text = response.wind.speed.toString()
+                tv_visibility_value?.text = response.wind.deg.toString()
 
 
-            tv_humidity_value?.text = response.main.humidity.toString()
-            tv_pressure_value?.text = response.wind.speed.toString()
-            tv_visibility_value?.text = response.wind.deg.toString()
+            })
+        }else{
+            weatherViewModel.getWeatherData.observe(viewLifecycleOwner, Observer { response->
+                output_group.visibility = View.VISIBLE
+                tv_error_message.visibility = View.GONE
+
+                tv_date_time?.text = response[0].weather[0].description
+                tv_temperature?.text = (response[0].main.temp - 273.15).toInt().toString()
+                tv_city_country?.text = response[0].name
+
+
+                tv_humidity_value?.text = response[0].main.humidity.toString()
+                tv_pressure_value?.text = response[0].wind.speed.toString()
+                tv_visibility_value?.text = response[0].wind.deg.toString()
+            })
+        }
 
 
 
-        })
+
 
 
         view.btn_refresh.setOnClickListener {
@@ -93,7 +114,33 @@ class DisplayWeatherFragment : Fragment()  {
         return view
     }
 
-
+    fun isInternetAvailable(context: Context?): Boolean {
+        var result = false
+        val cm = context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            cm?.run {
+                cm.getNetworkCapabilities(cm.activeNetwork)?.run {
+                    result = when {
+                        hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                        hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                        hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+                        else -> false
+                    }
+                }
+            }
+        } else {
+            cm?.run {
+                cm.activeNetworkInfo?.run {
+                    if (type == ConnectivityManager.TYPE_WIFI) {
+                        result = true
+                    } else if (type == ConnectivityManager.TYPE_MOBILE) {
+                        result = true
+                    }
+                }
+            }
+        }
+        return result
+    }
 
     companion object {
         /**
