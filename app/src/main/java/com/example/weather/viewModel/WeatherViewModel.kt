@@ -2,16 +2,12 @@ package com.example.weather.viewModel
 
 import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.weather.model.City
 import com.example.weather.repository.WeatherRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class WeatherViewModel @ViewModelInject constructor(private val weatherRepository: WeatherRepository): ViewModel() {
@@ -37,6 +33,10 @@ class WeatherViewModel @ViewModelInject constructor(private val weatherRepositor
         }
     }
 
-
+    val getWeatherData:LiveData<List<City>> = weatherRepository.getWeatherData
+        .flowOn(Dispatchers.Main).asLiveData(context = viewModelScope.coroutineContext)
+    fun insertWeatherData(weatherEntity: City?) =viewModelScope.launch {
+        weatherRepository.insertWeatherData(weatherEntity)
+    }
 
 }

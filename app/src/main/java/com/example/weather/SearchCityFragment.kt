@@ -6,7 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.weather.adapter.RecentSearchAdapter
+import com.example.weather.model.City
+import com.example.weather.viewModel.WeatherViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_search_city.*
 import kotlinx.android.synthetic.main.fragment_search_city.view.*
 
@@ -20,7 +27,10 @@ private const val ARG_PARAM2 = "param2"
  * Use the [SearchCityFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
+@AndroidEntryPoint
 class SearchCityFragment : Fragment() {
+    private lateinit var recentSearchAdapter: RecentSearchAdapter
+    private val weatherViewModel: WeatherViewModel by viewModels()
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -43,7 +53,19 @@ class SearchCityFragment : Fragment() {
             Navigation.findNavController(view).navigate(R.id.action_searchCityFragment_to_displayWeatherFragment,bundle)
         }
 
+
+        weatherViewModel.getWeatherData.observe(viewLifecycleOwner, Observer { response->
+            initRecyclerView(response as ArrayList<City>)
+        })
         return view
+    }
+
+    private fun initRecyclerView(data:ArrayList<City>) {
+        recentSearchAdapter= RecentSearchAdapter(data)
+        recently_searched_recycler_view?.apply {
+            layoutManager= LinearLayoutManager(activity)
+            adapter=recentSearchAdapter
+        }
     }
 
     companion object {

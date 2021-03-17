@@ -1,14 +1,16 @@
 package com.example.weather
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.viewModels
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.example.weather.databinding.ActivityMainBinding
 import com.example.weather.viewModel.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -82,7 +84,8 @@ class DisplayWeatherFragment : Fragment()  {
             weatherViewModel.getCityData()
         }
         view.btn_star.setOnClickListener {
-            //TODO insert data into db
+
+            weatherViewModel.insertWeatherData(weatherViewModel.weatherResponse.value)
         }
 
 
@@ -92,20 +95,6 @@ class DisplayWeatherFragment : Fragment()  {
 
 
 
-   /* private fun setWeatherInfo(weatherData: WeatherData) {
-        output_group.visibility = View.VISIBLE
-        tv_error_message.visibility = View.GONE
-
-        tv_date_time?.text = weatherData.dateTime
-        tv_temperature?.text = weatherData.temperature
-        tv_city_country?.text = weatherData.cityAndCountry
-
-
-        tv_humidity_value?.text = weatherData.humidity
-        tv_pressure_value?.text = weatherData.pressure
-        tv_visibility_value?.text = weatherData.visibility
-
-    }*/
     companion object {
         /**
          * Use this factory method to create a new instance of
